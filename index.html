@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js"
+      defer
+    ></script>
+
+    <link
+      href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <title>Clothing Shop App</title>
+  </head>
+  <body>
+    <div
+      x-data="{atTop:true}"
+      class="sticky top-0 z-10 bg-white my-4 pl-6 border-b-8 border-green-800 flex items-center lg:items-stretch flex-row"
+    >
+      <h1
+        tabindex="1"
+        @scroll.window="atTop=(window.pageYOffset>20)?false:true"
+        :class="{'scale-75 ':!atTop}"
+        class="transition duration-300 transform origin-left -skew-x-6 inline-block p-2 uppercase text-5xl bg-gradient-to-tr from-green-800 to-green-500 text-transparent bg-clip-text font-extrabold"
+      >
+        Chandler
+      </h1>
+
+      <nav class="text-gray-6 00 flex-1 flex lg:justify-end">
+        <a
+          tabindex="2"
+          x-data="{ open: false }"
+          href="/"
+          class="transition-colors duration-300 hover:text-gray-900 relative flex items-center px-4 text-sm uppercase flex-shrink-0 lg:px-8 lg:text-xl"
+          @mouseover="open=true"
+          @focus="open = true"
+          @mouseout="open=false"
+        >
+          Products
+          <ul
+            class="divide-y-2 divide-gray-200 absolute top-2 lg:top-12 left-0.5 font-normal bg-white shadow overflow-hidden rounded lg:w-48 w-32 border mt-3 right-0 z-20"
+            x-show.transition.opacity.duration.300ms="open"
+            @click.away="open=false"
+          >
+            <li tabindex="3" class="p-2 hover:underline hover:bg-gray-200">
+              👒 WOMEN
+            </li>
+            <li tabindex="4" class="p-2 hover:underline hover:bg-gray-200">
+              👞 MEN
+            </li>
+            <li tabindex="5" class="p-2 hover:underline hover:bg-gray-200">
+              👶 KIDS
+            </li>
+            <li
+              tabindex="6"
+              @blur="open = false"
+              class="p-2 hover:underline hover:bg-gray-200"
+            >
+              🪑 HOME DECOR
+            </li>
+          </ul>
+          <span
+            @keyup.tab="open=false"
+            class="absolute top-0 left-0 w-0.5 h-full bg-gray-200 transform -skew-x-12"
+          ></span
+        ></a>
+        <a
+          href="/"
+          class="transition-colors duration-300 hover:text-gray-900 relative flex items-center px-4 text-sm uppercase flex-shrink-0 lg:px-8 lg:text-xl"
+          >Orders<span
+            class="absolute top-0 left-0 w-0.5 h-full bg-gray-200 transform -skew-x-12"
+          ></span
+        ></a>
+        <a
+          href="/"
+          class="transition-colors duration-300 hover:text-gray-900 relative flex items-center px-4 text-sm uppercase flex-shrink-0 lg:px-8 lg:text-xl"
+          >Account<span
+            class="absolute top-0 left-0 w-0.5 h-full bg-gray-200 transform -skew-x-12"
+          ></span
+        ></a>
+        <a
+          href="/"
+          class="transition-colors duration-300 hover:text-gray-900 relative flex items-center px-4 text-sm uppercase flex-shrink-0 lg:px-8 lg:text-xl"
+          >My Cart<span
+            class="absolute top-0 left-0 w-0.5 h-full bg-gray-200 transform -skew-x-12"
+          ></span
+        ></a>
+        <a
+          href="/"
+          class="transition-colors duration-300 hover:text-gray-900 relative flex items-center px-4 text-sm uppercase flex-shrink-0 lg:px-8 lg:text-xl"
+          >Sign Out<span
+            class="absolute top-0 left-0 w-0.5 h-full bg-gray-200 transform -skew-x-12"
+          ></span
+        ></a>
+      </nav>
+    </div>
+
+    <main class="max-w-5xl mx-auto px-6 border-b border-green-800">
+      <div x-data="loadProducts()">
+        <input
+          class="w-full h-16 px-4 border-b border-green-800 mb-2 -mt-2"
+          type="text"
+          placeholder="Search here..."
+          x-ref="searchField"
+          x-model="search"
+          x-on:keydown.window.prevent.slash="$refs.searchField.focus()"
+        />
+        <div class="text-center lg:text-left" x-data="sourceData">
+          <div class="divide-x-2 inline-flex border-2 h-16 rounded-lg">
+            <a class="px-8 py-4 text-gray-500" href="">&larr; Prev</a>
+            <p class="px-8 py-4">Page 1 of 3</p>
+            <p class="px-8 py-4 hidden lg:block">
+              <span x-text="sourceData.length"></span> items total
+            </p>
+            <a class="px-8 py-4 text-gray-500" href="">Next &rarr;</a>
+          </div>
+        </div>
+        <!-- <ul
+          x-data="{items:[{id:0,name: '512 Flex black jean Tapered slim fit',price:98,comp:'1% ELASTANE, 31% LYOCELL, 68% COTTON',url:'https://imagescdn.simons.ca/images/8543/21110/1/A1_1.jpg?__=2'},
+    {id:1,name:'Faded T-shirt',price:35,comp:'COTTON',url:'https://imagescdn.simons.ca/images/6304/4918/10/A1_1.jpg?__=1'},{
+      id:2,name:'Juniper trucker cap',price:38,comp:'mesh',url:'https://imagescdn.simons.ca/images/11475/21103/9/A1_1.jpg?__=2'
+    },{id:3,name:'Kanken water-repellent backpack',price:110,url:'https://imagescdn.simons.ca/images/9985/5183010/45/A1_1.jpg?__=6'},{id:4,name:'Geometric safari beach towel',price:20,url:'https://imagescdn.simons.ca/images/5709/6211260/99/A1_1.jpg?__=1'}]}"
+          class="grid lg:grid-cols-3 grid-cols-2 gap-16 mt-6"
+        > -->
+        <ul class="grid lg:grid-cols-3 grid-cols-2 gap-16 mt-6">
+          <template x-for="item in filteredProducts" :key="item">
+            <li
+              class="shadow-md transition-shadow duration-300 hover:shadow-2xl relative"
+            >
+              <p
+                class="px-2 absolute -top-1 -right-1 text-white bg-green-800 text-3xl font-semibold transform rotate-3"
+              >
+                $ <span x-text="item.price"></span>
+              </p>
+              <img
+                class="h-96 w-full object-cover"
+                x-bind:src="item.url"
+                title="composition:1% ELASTANE, 31% LYOCELL, 68% COTTON"
+              />
+              <h2 class="text-center transform -skew-x-6 -rotate-1">
+                <a
+                  class="bg-green-800 text-white text-2xl px-2"
+                  href=""
+                  x-text="item.name"
+                ></a>
+              </h2>
+            </li>
+          </template>
+        </ul>
+
+        <div class="my-6 text-center lg:text-left" x-data="sourceData">
+          <div class="divide-x-2 inline-flex border-2 h-16 rounded-lg">
+            <a class="px-8 py-4 text-gray-500" href="">&larr; Prev</a>
+            <p class="px-8 py-4">Page 1 of 3</p>
+            <p class="px-8 py-4 hidden lg:block">
+              <span x-text="sourceData.length"></span> items total
+            </p>
+            <a class="px-8 py-4 text-gray-500" href="">Next &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+  <script>
+    function loadProducts() {
+      return {
+        search: '',
+        myForData: sourceData,
+        get filteredProducts() {
+          if (this.search === '') {
+            return this.myForData;
+          }
+          return this.myForData.filter((item) => {
+            return item.name.toLowerCase().includes(this.search.toLowerCase());
+          });
+        },
+      };
+    }
+
+    var sourceData = [
+      {
+        id: 0,
+        name: '512 Flex black jean Tapered slim fit',
+        price: 98,
+        comp: '1% ELASTANE, 31% LYOCELL, 68% COTTON',
+        url: 'https://imagescdn.simons.ca/images/8543/21110/1/A1_1.jpg?__=2',
+      },
+      {
+        id: 1,
+        name: 'Faded T-shirt',
+        price: 35,
+        comp: 'COTTON',
+        url: 'https://imagescdn.simons.ca/images/6304/4918/10/A1_1.jpg?__=1',
+      },
+      {
+        id: 2,
+        name: 'Juniper trucker cap',
+        price: 38,
+        comp: 'mesh',
+        url: 'https://imagescdn.simons.ca/images/11475/21103/9/A1_1.jpg?__=2',
+      },
+      {
+        id: 3,
+        name: 'Kanken water-repellent backpack',
+        price: 110,
+        url: 'https://imagescdn.simons.ca/images/9985/5183010/45/A1_1.jpg?__=6',
+      },
+      {
+        id: 4,
+        name: 'Geometric safari beach towel',
+        price: 20,
+        url: 'https://imagescdn.simons.ca/images/5709/6211260/99/A1_1.jpg?__=1',
+      },
+      {
+        id: 5,
+        name: 'DEPA-CAB utility sandals',
+        price: 180,
+        url: 'https://imagescdn.simons.ca/images/17270/21102/31/A1_1.jpg?__=5',
+      },
+      {
+        id: 6,
+        name: 'Family toothbrush holder',
+        price: 16,
+        url:
+          'https://litb-cgis.rightinthebox.com/images/640x640/202204/bps/product/inc/ucvrno1650507140800.jpg?fmt=webp&v=1',
+      },
+      // {
+      //   id: 7,
+      //   name: 'Manual fruit juicer',
+      //   price: 10,
+      //   url:
+      //     'https://litb-cgis.rightinthebox.com/images/640x640/202204/bps/product/inc/rlgreu1651205819083.jpg?fmt=webp&v=1',
+      // },
+    ];
+  </script>
+</html>
